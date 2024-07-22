@@ -1,4 +1,4 @@
-package com.prac.webapp.springmvc;
+package com.prac.webapp.springmvc.controller;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.prac.webapp.jee.LogInService;
+import com.prac.webapp.springmvc.service.LogInService;
+import com.prac.webapp.springmvc.service.ToDoService;
 
 @Controller
 public class LogInController {
@@ -22,7 +23,10 @@ public class LogInController {
 	WebApplicationContext applicationContext;
 	
 	@Autowired
-	private LogInServiceMvc logInServiceMvc;
+	private LogInService logInService;
+	
+	@Autowired
+	private ToDoService toDoService;
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public @ResponseBody String testPage() {
@@ -54,13 +58,14 @@ public class LogInController {
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String welcomeUser(@RequestParam String name, @RequestParam(name = "password") String userPassword, ModelMap model) {
-		Boolean userStatus = logInServiceMvc.validateUser(name, userPassword); 
+		Boolean userStatus = logInService.validateUser(name, userPassword); 
 		if (!userStatus) {
 			model.put("ErrorMessage", "Invalid Credentials!!");
 			System.out.println(userPassword);
 			return "LogInMvc";
 		} else {
 			model.put("name", name);
+			model.put("allToDos", toDoService.fetchAllToDos());
 			model.put("ErrorMessage", null);
 		}		 
 		return "WelComeMvc";
