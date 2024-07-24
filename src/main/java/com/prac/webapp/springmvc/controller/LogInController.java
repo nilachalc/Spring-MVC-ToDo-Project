@@ -1,32 +1,33 @@
 package com.prac.webapp.springmvc.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.prac.webapp.springmvc.bean.ToDoUser;
 import com.prac.webapp.springmvc.service.LogInService;
-import com.prac.webapp.springmvc.service.ToDoService;
 
+@SessionAttributes({"loggedinUserName", "loggedinUserId"})
 @Controller
 public class LogInController {
-	private static Logger logger = Logger.getRootLogger();
 	
 	@Autowired
 	WebApplicationContext applicationContext;
 	
 	@Autowired
 	private LogInService logInService;
-	
-	@Autowired
-	private ToDoService toDoService;
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public @ResponseBody String testPage() {
@@ -41,33 +42,38 @@ public class LogInController {
 		return string;
 	}
 	
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String goToLogInPage() {
+	@RequestMapping(value = "/todo-login", method = RequestMethod.GET)
+	public String goToLogInPage(HttpServletRequest request) {
 		BasicConfigurator.configure();
-		
-		logger.setLevel(Level.ERROR);
-		
-		logger.trace("Trace Logging");
-		logger.debug("Debug Logging");
-		logger.info("Info Logging");
-		logger.warn("Warn Logging");
-		logger.error("Error Logging");
-		
-		return "LogInMvc";
+		HttpSession session = request.getSession(false);
+        
+        if (session != null) {
+            session.invalidate();
+        }
+		return "LogInToDo";
 	}
 	
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	@RequestMapping(value = "/todo-login", method = RequestMethod.POST)
 	public String welcomeUser(@RequestParam String name, @RequestParam(name = "password") String userPassword, ModelMap model) {
-		Boolean userStatus = logInService.validateUser(name, userPassword); 
-		if (!userStatus) {
+		ToDoUser user = logInService.validateUser(name, userPassword); 
+		if (user.getUserId() == 0) {
 			model.put("ErrorMessage", "Invalid Credentials!!");
-			System.out.println(userPassword);
-			return "LogInMvc";
+			return "LogInToDo";
 		} else {
-			model.put("name", name);
-			model.put("allToDos", toDoService.fetchAllToDos());
+			model.put("loggedinUserName", user.getUserName());
+			model.put("loggedinUserId", user.getUserId());
+			model.put("allToDos", logInService.fetchAllToDosForLoggedInUser(user.getUserId()));
 			model.put("ErrorMessage", null);
 		}		 
-		return "WelComeMvc";
+		return "WelComeToDo";
 	}
+	
+	@GetMapping("/logout-ToDo")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return "LogInToDo";
+    }
 }

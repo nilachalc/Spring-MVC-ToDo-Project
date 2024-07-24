@@ -1,23 +1,37 @@
 package com.prac.webapp.springmvc.service;
 
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.prac.webapp.springmvc.bean.ToDo;
+import com.prac.webapp.springmvc.repository.ToDoRepository;
 
 @Service
 public class ToDoService {
-	static List<ToDo> toDos;
-	static {
-		ToDoService.toDos = Arrays.asList(new ToDo(1, "TestTodoDes1", LocalDate.now())
-										,new ToDo(2, "TestTodoDes2", LocalDate.now())
-										,new ToDo(3, "TestTodoDes3", LocalDate.now()));
+	
+	@Autowired
+	private ToDoRepository toDoRepository;
+	
+	public List<ToDo> fetchAllToDosForLoggedInUser(int loggedInUserId) {
+		List<ToDo> allToDos = toDoRepository.getAllToDosForLoggedInUser(loggedInUserId);
+		for (int i = 0; i < allToDos.size(); i++) {
+			allToDos.get(i).setToDoSerialNumber(i+1);
+		}
+		return allToDos;
 	}
 	
-	public List<ToDo> fetchAllToDos() {
-		return ToDoService.toDos;
+	@Transactional
+	public void deleteToDosForLoggedInUser(int toDoId) {
+		toDoRepository.deleteToDosForLoggedInUser(toDoId);
+	}
+	
+	@Transactional
+	public List<ToDo> addToDosForLoggedInUser(ToDo newToDo) {
+		toDoRepository.addToDosForLoggedInUser(newToDo);
+		return fetchAllToDosForLoggedInUser(newToDo.getMappedUserId());
 	}
 }

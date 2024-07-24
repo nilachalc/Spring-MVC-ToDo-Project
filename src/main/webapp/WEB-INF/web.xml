@@ -8,6 +8,14 @@
 		<welcome-file>login.do</welcome-file>
 	</welcome-file-list>
 
+	<listener>
+        <listener-class>com.prac.webapp.springmvc.configuration.AppContextListener</listener-class>
+    </listener>
+
+	<session-config>
+        <session-timeout>1</session-timeout> <!-- Session timeout in minutes -->
+    </session-config>
+
 	<servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>
