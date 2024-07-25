@@ -28,7 +28,7 @@ public class ToDoRepository {
 										toDo.setTargetDate(DateTimeFormatter.ofPattern("dd/MM/yyyy").format(rs.getDate("TARGET_DATE").toLocalDate()));
 										toDo.setIsCompleted((rs.getString("IS_COMPLETED").equals("N") ? true : false));
 									return toDo;
-								}, loggedInUserId).sorted(Comparator.comparing(ToDo :: getIsCompleted).reversed()).collect(Collectors.toList());
+								}, loggedInUserId).sorted(Comparator.comparing(ToDo :: getIsCompleted).reversed().thenComparing(ToDo :: getDescription)).collect(Collectors.toList());
 		
 	}
 	

@@ -27,7 +27,8 @@ public class ToDoController {
 	}
 	
 	@RequestMapping(value = "/add-ToDo", method = RequestMethod.GET)
-	public String goToAddToDoPage() {
+	public String goToAddToDoPage(ModelMap model) {
+		model.addAttribute("newToDo", new ToDo());
 		return "AddToDo";
 	}
 	

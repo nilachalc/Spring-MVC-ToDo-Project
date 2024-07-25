@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"  pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -15,32 +16,33 @@
 	<body>
 	<p class="text-danger"><b>${ ErrorMessage }</b></p>
 	<div class="container">
-		<form action="/mvc/add-ToDo?loggedinUserId=${loggedinUserId}" method="post">
-		<table class="table table-striped" >
-			<tr style="background-color: aqua;">
-			  <th colspan="2" class="lead" >:: Enter Your ToDo ::</th>
-			</tr>
-			<tr>
-				<td><label>Description</label></td>
-				<td><input class="text" type="text" name="description" /></td>
-			</tr>
-			<tr>
-				<td><label>Target Date</label></td>
-				<td>
-					<!-- <input class="text" id="targetDate" name="targetDate" /> -->
-					<jsp:include page="../views/DatePicker.html"></jsp:include>
-			    	<input name="targetDate" id="targetDateId" type= "hidden" class="textbox">
-				</td>
-			</tr>
-			<tr>
-				<td><label>Is Completed</label></td>
-				<td><input class="text" type="checkbox" name="isCompleted" /></td>
-			</tr>
-			<tr>
-				<td colspan="2" ><input type="submit" class="btn btn-success"  value="Add ToDo" /></td>
-			</tr>
-		</table>
-		</form>
+		<form:form action="/mvc/add-ToDo?loggedinUserId=${loggedinUserId}" method="post" modelAttribute="newToDo" >
+			<table class="table table-striped" >
+				<tr style="background-color: aqua;">
+				  <th colspan="2" class="lead" >:: Enter Your ToDo ::</th>
+				</tr>
+				<tr>
+					<td><form:label path="description">Description</form:label></td>
+					<td><form:input class="text" type="text" path="description" required="required"/></td>
+				</tr>
+				<tr>
+					<td><form:label path="targetDate" >Target Date</form:label></td>
+					<td>
+						<jsp:include page="../views/DatePicker.html"></jsp:include>
+				    	<form:input path="targetDate" id="targetDateId" type= "hidden" class="textbox"/>
+					</td>
+				</tr>
+				<tr>
+					<td><form:label path="isCompleted">Is Completed</form:label></td>
+					<td>
+						<input class="text" type="checkbox" name="isCompleted" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" ><input type="submit" class="btn btn-success"  value="Add ToDo" /></td>
+				</tr>
+			</table>
+		</form:form>
 	</div>
 	<script>
 		function updateValue() {
