@@ -1,5 +1,7 @@
 package com.prac.webapp.springmvc.controller;
 
+import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -54,7 +56,7 @@ public class LogInController {
 	}
 	
 	@RequestMapping(value = "/todo-login", method = RequestMethod.POST)
-	public String welcomeUser(@RequestParam String name, @RequestParam(name = "password") String userPassword, ModelMap model) {
+	public String welcomeUser(@RequestParam String name, @RequestParam(name = "password") String userPassword, ModelMap model, Locale locale) {
 		ToDoUser user = logInService.validateUser(name, userPassword); 
 		if (user.getUserId() == 0) {
 			model.put("ErrorMessage", "Invalid Credentials!!");
@@ -64,7 +66,8 @@ public class LogInController {
 			model.put("loggedinUserId", user.getUserId());
 			model.put("allToDos", logInService.fetchAllToDosForLoggedInUser(user.getUserId()));
 			model.put("ErrorMessage", null);
-		}		 
+		}
+		System.out.println("Current Locale is " + locale);
 		return "WelComeToDo";
 	}
 	

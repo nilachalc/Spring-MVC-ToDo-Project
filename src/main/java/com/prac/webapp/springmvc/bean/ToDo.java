@@ -1,12 +1,18 @@
 package com.prac.webapp.springmvc.bean;
 
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ToDo {
 	private Integer toDoId;
 	private Integer toDoSerialNumber;
+	@Size(min = 6, message = "At least 6 charecters are required.")
+	@Size(max = 25, message = "Maximum 25 charecters are  accepted.")
 	private String description;
+	@NotBlank(message = "Please fill out this field.")
 	private String targetDate;
 	private boolean isCompleted;
 	private Integer mappedUserId;

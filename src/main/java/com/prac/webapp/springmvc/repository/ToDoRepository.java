@@ -26,9 +26,9 @@ public class ToDoRepository {
 										toDo.setToDoId(rs.getInt("TODO_ID"));
 										toDo.setDescription(rs.getString("TODO_DESCRIPTION"));
 										toDo.setTargetDate(DateTimeFormatter.ofPattern("dd/MM/yyyy").format(rs.getDate("TARGET_DATE").toLocalDate()));
-										toDo.setIsCompleted((rs.getString("IS_COMPLETED").equals("N") ? true : false));
+										toDo.setIsCompleted((rs.getString("IS_COMPLETED").equals("Y") ? true : false));
 									return toDo;
-								}, loggedInUserId).sorted(Comparator.comparing(ToDo :: getIsCompleted).reversed().thenComparing(ToDo :: getDescription)).collect(Collectors.toList());
+								}, loggedInUserId).sorted(Comparator.comparing(ToDo :: getIsCompleted).thenComparing(ToDo :: getDescription)).collect(Collectors.toList());
 		
 	}
 	
@@ -40,5 +40,24 @@ public class ToDoRepository {
 		jdbcTemplate.update("INSERT INTO TESTDB.TODO_INFO\r\n"
 				+ "(TODO_ID, TODO_DESCRIPTION, TARGET_DATE, IS_COMPLETED, MAPPED_USER_ID)\r\n"
 				+ "VALUES(todo_info_seq.NEXTVAL, ?, ?, ?, ?)", newToDo.getDescription(), Date.valueOf(LocalDate.parse(newToDo.getTargetDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy"))), (newToDo.getIsCompleted() ? "Y" : "N"), newToDo.getMappedUserId());
+	}
+	
+	public ToDo getToDo(int toDoId) {
+		return jdbcTemplate.queryForObject("SELECT ti.TODO_DESCRIPTION, ti.TARGET_DATE, ti.IS_COMPLETED, ti.MAPPED_USER_ID FROM TODO_INFO ti WHERE ti.TODO_ID =?"
+								,  (rs, rowNum) -> {
+									ToDo toDo = new ToDo();
+									if (rs != null)
+										toDo.setDescription(rs.getString("TODO_DESCRIPTION"));
+										toDo.setTargetDate(DateTimeFormatter.ofPattern("dd/MM/yyyy").format(rs.getDate("TARGET_DATE").toLocalDate()));
+										toDo.setIsCompleted((rs.getString("IS_COMPLETED").equals("Y") ? true : false));
+										toDo.setMappedUserId(rs.getInt("MAPPED_USER_ID"));
+									return toDo;
+								}, toDoId);
+	}
+	
+	public void updateToDo(ToDo updatedToDo) {
+		jdbcTemplate.update("UPDATE TESTDB.TODO_INFO\r\n"
+				+ " SET TODO_DESCRIPTION = ?, TARGET_DATE = ?, IS_COMPLETED = ?, MAPPED_USER_ID = ? \r\n"
+				+ "WHERE TODO_ID = ?", updatedToDo.getDescription(), Date.valueOf(LocalDate.parse(updatedToDo.getTargetDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy"))), (updatedToDo.getIsCompleted() ? "Y" : "N"), updatedToDo.getMappedUserId(), updatedToDo.getToDoId());
 	}
 }

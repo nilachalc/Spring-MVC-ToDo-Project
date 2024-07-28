@@ -12,6 +12,10 @@
         <listener-class>com.prac.webapp.springmvc.configuration.AppContextListener</listener-class>
     </listener>
 
+	<error-page>
+	    <location>/WEB-INF/views/Error.jsp</location>
+	</error-page>
+
 	<session-config>
         <session-timeout>1</session-timeout> <!-- Session timeout in minutes -->
     </session-config>

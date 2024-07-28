@@ -34,4 +34,14 @@ public class ToDoService {
 		toDoRepository.addToDosForLoggedInUser(newToDo);
 		return fetchAllToDosForLoggedInUser(newToDo.getMappedUserId());
 	}
+	
+	public ToDo fetchToDo(int toDoId) {
+		return toDoRepository.getToDo(toDoId);
+	}
+	
+	@Transactional
+	public List<ToDo> updateToDo(ToDo newToDo) {
+		toDoRepository.updateToDo(newToDo);
+		return fetchAllToDosForLoggedInUser(newToDo.getMappedUserId());
+	}
 }

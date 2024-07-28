@@ -8,6 +8,7 @@
     		rel="stylesheet">
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+		<%@ taglib uri="http://www.springframework.org/tags" prefix="sp" %>
 	</head>
 	<%
 		if (request.getSession(true).getAttribute("loggedinUserId") == null) {
@@ -15,8 +16,8 @@
 		}
 	%>
 	<body>
-		<div class="container" ><p class="lead">Welcome ${ loggedinUserName }</p></div>
-		<form id="WelComeMvc" name="WelComeMvcContainer" action="/mvc/login" method="get" >
+		<div class="container" ><p class="lead"><sp:message code="todo.welcomePagecaption" /> ${ loggedinUserName }</p></div>
+		<form id="WelComeMvc" name="WelComeMvcContainer" method="get" >
 			<div class="container">
 				<table class="table table-striped">
 					<tr>
@@ -38,12 +39,12 @@
 										<td><label>${toDo.toDoSerialNumber}</label></td>
 										<td><label>${toDo.description}</label></td>
 										<td><label>${toDo.targetDate}</label></td>
-										<td><input type="checkbox" 
-								            <c:if test="${!toDo.isCompleted}">
+										<td><input disabled type="checkbox" 
+								            <c:if test="${toDo.isCompleted}">
 								                checked
 								            </c:if>
 								        ></td>
-								        <td><a class="btn btn-primary" href="">Update</a></td>
+								        <td><a class="btn btn-primary" href="/mvc/update-ToDo?toDoId=${toDo.toDoId}">Update</a></td>
 								        <td><a class="btn btn-danger" href="/mvc/delete-ToDo?toDoId=${toDo.toDoId}&loggedinUserId=${loggedinUserId}">Delete</a></td>
 									</tr>		
 								</c:forEach>
@@ -54,7 +55,7 @@
 				<table class="table">
 					<tr>
 						<td>
-							<a class="btn btn-success" href="/mvc/add-ToDo">Add</a>
+							<a class="btn btn-success" href="/mvc/add-ToDo?loggedinUserId=${loggedinUserId}">Add</a>
 						</td>
 						<td align="right" colspan="100" >
 							<a class="btn btn-danger" href="/mvc/todo-login">Logout</a>

@@ -4,16 +4,17 @@
 	<head>
 		<meta charset="ISO-8859-1">
 		<title>LogIn ToDo User</title>
+		<%@ taglib uri="http://www.springframework.org/tags" prefix="sp" %>
 		<link href="/webjars/bootstrap/5.2.0/css/bootstrap.min.css"
     		rel="stylesheet">
 	</head>
 	<body>
 	<p class="text-danger"><b>${ ErrorMessage }</b></p>
 	<div class="container">
-		<form action="/mvc/todo-login" method="post">
+		<form action="/mvc/todo-login?lang=de" method="post">
 		<table class="table table-striped" >
 			<tr>
-			  <th colspan="2" class="lead" style="background-color: aqua;">:: Enter Your Credential ::</th>
+			  <th colspan="2" class="lead" style="background-color: aqua;">:: <sp:message code="todo.loginPageCaption" /> :: </th>
 			</tr>
 			<tr>
 				<td><label>Name</label></td>
